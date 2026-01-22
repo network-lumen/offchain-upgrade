@@ -1,9 +1,15 @@
 #!/usr/bin/env bash
-# Cosmos Off-chain Upgrade Watcher
-# Monitors block height and automatically upgrades binary at target height
+# Cosmos Off-chain Upgrade Watcher (Verbose/Advanced Version)
+# Enhanced version with detailed logging, retry mechanism, and automatic backup
 # 
-# Security: Requires root ownership, validates file permissions, supports SHA256 verification
-# Reliability: Retry mechanism for RPC calls, backup of old binary, atomic operations
+# This is the verbose version with advanced features:
+# - Detailed logging with timestamps
+# - RPC retry mechanism for better reliability
+# - Automatic binary backup before upgrade
+# - Enhanced error handling and validation
+# - RPC failure tracking and warnings
+# 
+# For the basic version, see upgrade-watcher.sh
 
 set -euo pipefail  # Exit on error, undefined vars, pipe failures
 IFS=$'\n\t'        # Internal Field Separator for safer word splitting
@@ -333,3 +339,4 @@ else
   log_error "service status check failed after upgrade"
   exit 1
 fi
+
