@@ -10,6 +10,9 @@ SERVICE_NAME="${SERVICE_NAME:-lumend}"
 BIN_NEW="${BIN_NEW:?missing BIN_NEW}"
 BIN_ACTIVE="${BIN_ACTIVE:-/usr/local/bin/lumend}"
 CHECK_INTERVAL="${CHECK_INTERVAL:-1}"
+DYNAMIC_INTERVAL_THRESHOLD="${DYNAMIC_INTERVAL_THRESHOLD:-100}"
+DYNAMIC_INTERVAL_FAR="${DYNAMIC_INTERVAL_FAR:-30}"
+DYNAMIC_INTERVAL_NEAR="${DYNAMIC_INTERVAL_NEAR:-1}"
 
 LOCK_DIR="${LOCK_DIR:-/run/upgrade-watcher}"
 LOCKFILE="$LOCK_DIR/upgrade-watcher.lock"
@@ -100,8 +103,21 @@ while true; do
       echo "[upgrade] reached height $HEIGHT"
       break
     fi
+    
+    # Dynamic interval logic
+    BLOCKS_REMAINING=$((UPGRADE_HEIGHT - HEIGHT))
+    if [ "$BLOCKS_REMAINING" -gt "$DYNAMIC_INTERVAL_THRESHOLD" ]; then
+      CURRENT_INTERVAL=$DYNAMIC_INTERVAL_FAR
+    else
+      CURRENT_INTERVAL=$DYNAMIC_INTERVAL_NEAR
+    fi
+    
+    echo "[upgrade] height: $HEIGHT, remaining: $BLOCKS_REMAINING blocks, interval: ${CURRENT_INTERVAL}s"
+    sleep "$CURRENT_INTERVAL"
+  else
+    # if RPC failed, use CHECK_INTERVAL as fallback
+    sleep "$CHECK_INTERVAL"
   fi
-  sleep "$CHECK_INTERVAL"
 done
 
 echo "[upgrade] stopping service $SERVICE_NAME"
