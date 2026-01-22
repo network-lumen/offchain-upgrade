@@ -1,5 +1,10 @@
 [Unit]
+# Cosmos Off-chain Upgrade Watcher Service
+# Monitors block height and automatically upgrades binary at target height
 Description=Cosmos off-chain upgrade watcher
+Documentation=https://github.com/your-repo/offchain-upgrade
+
+# Ensure network is available before starting
 After=network-online.target
 Wants=network-online.target
 
@@ -7,13 +12,51 @@ Wants=network-online.target
 Type=simple
 User=root
 Group=root
+
+# Load environment variables from configuration file
 EnvironmentFile=/etc/upgrade-watcher.env
 Environment=ENV_FILE=/etc/upgrade-watcher.env
+
+# Runtime directory for lock files (created automatically by systemd)
 RuntimeDirectory=upgrade-watcher
 RuntimeDirectoryMode=0700
+
+# Restrict file permissions (owner read/write/execute only)
 UMask=0077
+
+# Main script execution
 ExecStart=/usr/local/bin/upgrade-watcher.sh
+
+# Do not restart on failure (upgrade should only run once)
+# This prevents infinite restart loops if upgrade fails
 Restart=no
 
+# Logging configuration
+# Send stdout and stderr to systemd journal
+StandardOutput=journal
+StandardError=journal
+
+# Log rate limiting (prevent log spam)
+LogRateLimitIntervalSec=0
+LogRateLimitBurst=0
+
+# Security hardening
+# Prevent service from being modified by unprivileged users
+ProtectSystem=strict
+ReadWritePaths=/run/upgrade-watcher /var/backups/upgrade-watcher
+
+# Allow only necessary capabilities
+CapabilityBoundingSet=CAP_SYS_ADMIN
+
+# Prevent service from accessing unnecessary filesystems
+PrivateTmp=no
+ProtectHome=no
+
+# Timeout configuration
+# Give the service enough time to complete upgrade (default: no timeout)
+TimeoutStartSec=0
+TimeoutStopSec=30
+
 [Install]
+# Enable service to start on system boot (multi-user.target = normal boot)
 WantedBy=multi-user.target
