@@ -67,8 +67,14 @@ Optional parameters:
 SERVICE_NAME=lumend
 BIN_ACTIVE=/usr/local/bin/lumend
 RPC=http://127.0.0.1:26657
-CHECK_INTERVAL=1
+CHECK_INTERVAL=1 # fallback when RPC fails
+
+# Dynamic interval (defaults shown, adjustable)
+DYNAMIC_INTERVAL_THRESHOLD=100  # blocks
+DYNAMIC_INTERVAL_FAR=30         # seconds
+DYNAMIC_INTERVAL_NEAR=1         # seconds
 ```
+>**Note**: Dynamic interval is enabled by default. The watcher checks every 30s when >100 blocks away, switching to 1s when ≤100 blocks remain. When RPC queries fail, `CHECK_INTERVAL` is used as fallback since block distance cannot be calculated.
 
 ---
 
