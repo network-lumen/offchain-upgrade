@@ -2,7 +2,7 @@
 # Cosmos Off-chain Upgrade Watcher Service
 # Monitors block height and automatically upgrades binary at target height
 Description=Cosmos off-chain upgrade watcher
-Documentation=https://github.com/your-repo/offchain-upgrade
+Documentation=https://github.com/network-lumen/offchain-upgrade
 
 # Ensure network is available before starting
 After=network-online.target
