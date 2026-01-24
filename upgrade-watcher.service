@@ -43,7 +43,7 @@ LogRateLimitBurst=0
 # Security hardening
 # Prevent service from being modified by unprivileged users
 ProtectSystem=strict
-ReadWritePaths=/run/upgrade-watcher /var/backups/upgrade-watcher
+ReadWritePaths=/run/upgrade-watcher /var/backups/upgrade-watcher /usr/local/bin
 
 # Allow only necessary capabilities
 CapabilityBoundingSet=CAP_SYS_ADMIN
